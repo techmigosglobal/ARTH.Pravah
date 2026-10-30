@@ -10,5 +10,7 @@
     "preview": "node scripts/serve.mjs --dist",
     "check": "node --check src/app.js && node --check src/sequence.js && node --check src/data.js && node --check src/hero-carousel.js && node --check src/motion.js && node --check src/glb.js && node --check src/bike-viewer.js && node --test tests/core.test.mjs"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": "22.x"
+  }
 }

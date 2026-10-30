@@ -16,6 +16,7 @@ Updated: 30 October 2026. This checklist tracks requested outcomes, implementati
 | O10 | Record changes, limitations and current verification results | Documented | README includes capabilities, limits, GLB handoff contract and tests; this checklist separates implemented viewers from missing accurate bike models |
 | O11 | Use Bhoomi Automobiles as a continuing reference for required future development | Recorded; ongoing | Evaluate model discovery, media galleries, comparison, calculators, FAQs and support navigation against PRD; keep unapproved product facts and out-of-scope workflows separate |
 | O12 | Push the completed and verified implementation to techmigosglobal/ARTH.Pravah on main | Pushed and verified | Implementation commit 012cdbf published to main; remote revision matched local HEAD after push; reviewed source/media included and build/test artifacts excluded |
+| O13 | Correct Vercel static deployment output and direct-route handling | Verified locally | Production build and 8 native tests pass; Vercel config fields validated against official schema, route exclusions checked, existing headers preserved and Node 22.x pinned; fix prepared for GitHub |
 
 ## Constraints retained
 

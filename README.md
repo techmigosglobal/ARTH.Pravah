@@ -4,7 +4,7 @@ A dependency-free cinematic frontend based on `PRD.md`. No framework existed in 
 
 ## Run locally
 
-Requires an existing Node.js 20+ installation. There is no install step.
+The deployment runtime is pinned to Node.js 22.x; use an existing Node.js 22 installation locally. There is no install step.
 
 ```bash
 npm run dev
@@ -29,7 +29,7 @@ npm run preview
 | `assets/models/`, `assets/frames/`, `assets/fonts/`, `assets/3d/manifest.json` | 24 optimised model images, 504 real extracted frames, actual-file manifest, local font/licence, and explicit pending 3D model manifest |
 | `scripts/prepare-media.py`, `scripts/build.mjs`, `scripts/serve.mjs` | Optional source preparation, dependency-free production build and local preview server |
 | `tests/core.test.mjs`, `tests/browser.test.mjs`, `tests/motion-browser.test.mjs`, `tests/glb-fixture.mjs` | Native logic/media checks and browser scenarios |
-| `package.json`, `netlify.toml`, `_headers`, `robots.txt`, `.gitignore` | Run commands, deployment settings, headers, preview indexing controls and generated-file exclusions |
+| `package.json`, `netlify.toml`, `vercel.json`, `_headers`, `robots.txt`, `.gitignore` | Run commands, deployment settings, headers, preview indexing controls and generated-file exclusions |
 | `README.md`, `OBJECTIVES.md` | Run/deployment instructions, user objectives, feature backlog and verification status |
 | `dist/`, `.test-artifacts/` (generated, ignored) | Production output and local verification evidence |
 
@@ -102,6 +102,18 @@ In this workspace, the existing Playwright path is `/home/vinay/.cache/codex-run
 The browser suite checks real Canvas pixel changes during forward/reverse scrolling, progressive initial loading, pause/scrub, six model switches, galleries, comparison, cost arithmetic, route states, mobile/tablet widths, reduced motion, individual/all missing frames and normal-journey console errors. The additional `tests/motion-browser.test.mjs` uses the same command/environment pattern and checks nine scenarios: real hero autoplay, manual controls/rapid selection, focus/offscreen holds, global pause, mobile/reduced motion, all six pending 3D states, native WebGL geometry rotation/zoom/reset/drag, invalid-file fallback and console errors. Its GLB fixture is synthetic non-bike geometry, intercepted only within the test browser, never part of the public model manifest. It proves renderer infrastructure, not accurate 3D bike content.
 
 It does not prove live messaging, backend access control, PRD production readiness, field Core Web Vitals or hosted behaviour.
+
+## Vercel build configuration
+
+`vercel.json` explicitly sets the framework to Other (`null`), build command to `npm run build`, and output directory to `dist`. The build intentionally does not create `public`; changing Vercel's expected output fixes `STATIC_BUILD_NO_OUT_DIR`.
+
+Direct application URLs rewrite to `index.html`. Requests for `/assets/`, `/src/`, `/api/`, `robots.txt` and the Netlify metadata files are excluded from the app fallback, so missing media or scripts are not returned as successful HTML. Existing static files are served from the build output. Existing preview no-index/security headers and asset cache settings are explicitly configured for Vercel because Netlify's `_headers` file is provider-specific.
+
+The Node engine is pinned to `22.x`, matching the Netlify runtime. No npm dependency installation or framework conversion is needed for this fix.
+
+For the Git-connected Vercel project, deploy the latest `main` commit. If checking the dashboard manually, use repository root, framework **Other**, build command `npm run build`, and output directory `dist`. Redeploying the old `d9ee6ca` commit will not include the configuration fix. No environment variables are required for this static frontend. Business/backend launch prerequisites still apply.
+
+Reference: [Vercel project configuration](https://vercel.com/docs/project-configuration/vercel-json).
 
 ## Exact Netlify deployment steps (not executed)
 
