@@ -1,0 +1,14 @@
+{
+  "name": "arth-pravah",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free cinematic product website",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs --dist",
+    "check": "node --check src/app.js && node --check src/sequence.js && node --check src/data.js && node --check src/hero-carousel.js && node --check src/motion.js && node --check src/glb.js && node --check src/bike-viewer.js && node --test tests/core.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
