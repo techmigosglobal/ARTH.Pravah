@@ -6,7 +6,7 @@ const built=process.argv.includes('--dist'),root=resolve(built?'dist':'.'),port=
 const headerFile=await readFile(resolve(root,'_headers'),'utf8');
 const headers=Object.fromEntries(headerFile.split('\n/assets/')[0].split('\n').filter(l=>l.startsWith('  ')).map(l=>{const i=l.indexOf(':');return [l.slice(0,i).trim(),l.slice(i+1).trim()];}));
 if(!built&&settings.indexable) delete headers['X-Robots-Tag'];
-const mime={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.json':'application/json','.webp':'image/webp','.ttf':'font/ttf','.txt':'text/plain','.xml':'application/xml','.glb':'model/gltf-binary'};
+const mime={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.json':'application/json','.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.ttf':'font/ttf','.txt':'text/plain','.xml':'application/xml','.glb':'model/gltf-binary'};
 http.createServer(async(req,res)=>{
   const send=(status,data,type)=>{res.writeHead(status,{...headers,'Content-Type':type,'Cache-Control':'no-cache'});res.end(req.method==='HEAD'?undefined:data);};
   try{

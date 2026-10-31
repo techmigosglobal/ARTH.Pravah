@@ -1,5 +1,9 @@
 # ARTH.Pravah frontend
 
+## Arthasya homepage
+
+The parent homepage is now at `/`, following the approved Arthasya design and using the complete owner-supplied logo. The existing EV homepage is at `/arth.pravah`; model pages and interactive features retain their existing routes. Run `npm run dev` to preview locally. See [homepage implementation and verification](docs/arthasya-homepage.md) for assets, navigation, availability states and design review details.
+
 A dependency-free cinematic frontend based on `PRD.md`. No framework existed in the supplied workspace. The implementation uses semantic HTML, CSS, ES modules, Canvas, requestAnimationFrame, IntersectionObserver and ResizeObserver. No npm packages were installed, and no animation library is used.
 
 ## Run locally

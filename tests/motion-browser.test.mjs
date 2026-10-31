@@ -13,7 +13,7 @@ async function check(name,run){try{await run();results.push({name,status:'pass'}
 async function modelIs(id){await page.waitForFunction(id=>document.querySelector('.home-hero')?.dataset.model===id,id);}
 try{
  await check('hero automatically advances real imagery, title, description, link and selected model',async()=>{
-   await page.goto(base);await page.waitForLoadState('networkidle');assert.equal(await page.locator('.home-hero').getAttribute('data-model'),'aero');
+   await page.goto(base+'/arth.pravah');await page.waitForLoadState('networkidle');assert.equal(await page.locator('.home-hero').getAttribute('data-model'),'aero');
    await page.waitForFunction(()=>document.querySelector('.home-hero').dataset.model==='apex',{},{timeout:10000});
    assert.match(await page.locator('h1').innerText(),/A little presence/);assert.match(await page.locator('.hero-image.is-active').getAttribute('src'),/apex/);
    assert.equal(await page.locator('[data-select-model=apex]').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('[data-hero-discover]').getAttribute('href'),'/models/apex');
@@ -29,11 +29,11 @@ try{
    await page.locator('[data-hero-discover]').focus();assert.equal(await page.locator('.home-hero').getAttribute('data-running'),'false');
  });
  await check('offscreen hero stays fixed and does not change the film during scroll',async()=>{
-   await page.goto(base);await page.locator('#film').scrollIntoViewIfNeeded();const id=await page.locator('.home-hero').getAttribute('data-model');
+   await page.goto(base+'/arth.pravah');await page.locator('#film').scrollIntoViewIfNeeded();const id=await page.locator('.home-hero').getAttribute('data-model');
    await page.waitForTimeout(6500);assert.equal(await page.locator('.home-hero').getAttribute('data-model'),id);assert.equal(await page.locator('.home-hero').getAttribute('data-running'),'false');
  });
  await check('global pause freezes autoplay, graphics and scroll-driven film while manual controls work',async()=>{
-   await page.goto(base);await page.getByRole('button',{name:'Pause animations',exact:true}).click();assert.ok(await page.locator('html').evaluate(e=>e.classList.contains('motion-paused')));
+   await page.goto(base+'/arth.pravah');await page.getByRole('button',{name:'Pause animations',exact:true}).click();assert.ok(await page.locator('html').evaluate(e=>e.classList.contains('motion-paused')));
    assert.equal(await page.locator('.home-hero').getAttribute('data-running'),'false');
    assert.equal(await page.locator('.flow-pulse').evaluate(e=>getComputedStyle(e).animationPlayState),'paused');
    assert.equal(await page.locator('.final-cta').evaluate(e=>getComputedStyle(e,'::after').animationPlayState),'paused');
@@ -43,10 +43,10 @@ try{
    await page.getByRole('button',{name:'Resume animations',exact:true}).click();
  });
  await check('motion graphics, mobile layout and reduced-motion manual carousel are usable',async()=>{
-   await page.setViewportSize({width:375,height:844});await page.goto(base);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   await page.setViewportSize({width:375,height:844});await page.goto(base+'/arth.pravah');assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
    await page.waitForTimeout(1350);await page.screenshot({path:'.test-artifacts/hero-autoplay-mobile.png'});
    await page.locator('.motion-interlude').scrollIntoViewIfNeeded();await page.waitForTimeout(800);assert.equal(await page.locator('.flow-models a').count(),6);await page.screenshot({path:'.test-artifacts/motion-graphic-mobile.png'});
-   const reduced=await browser.newContext({reducedMotion:'reduce',viewport:{width:375,height:844}}),p=await reduced.newPage();await p.goto(base);await p.waitForLoadState('networkidle');assert.equal(await p.locator('.home-hero').getAttribute('data-running'),'false');
+   const reduced=await browser.newContext({reducedMotion:'reduce',viewport:{width:375,height:844}}),p=await reduced.newPage();await p.goto(base+'/arth.pravah');await p.waitForLoadState('networkidle');assert.equal(await p.locator('.home-hero').getAttribute('data-running'),'false');
    await p.locator('[data-hero-slide=nova]').click();await p.waitForFunction(()=>document.querySelector('.home-hero').dataset.model==='nova');assert.equal(await p.locator('canvas').first().getAttribute('data-state'),'reduced');await reduced.close();
  });
  await check('six product pages offer lazy photo-based 3D previews beside the gallery',async()=>{

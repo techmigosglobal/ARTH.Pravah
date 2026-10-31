@@ -18,7 +18,7 @@ function render(){
   const url=new URL(location.href),path=url.pathname.replace(/\/$/,'')||'/';const model=getModel(path.split('/')[2]);const context=getModel(url.searchParams.get('model'));
   selected=path.startsWith('/models/')&&model?model.id:selected;
   const {html,heading}=renderPage(path,{selected,compare,context});
-  main.innerHTML=html;updateSEO(pageSEO(path));document.body.classList.toggle('is-home',path==='/');document.querySelectorAll('.site-header nav a').forEach(a=>{if(new URL(a.href).pathname===path)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+  main.innerHTML=html;updateSEO(pageSEO(path));document.body.classList.toggle('is-home',path==='/arth.pravah');document.querySelectorAll('.site-header nav a').forEach(a=>{if(new URL(a.href).pathname===path)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
   const filmEl=main.querySelector('.film-section');if(filmEl)sequence=new ScrollSequence(filmEl,model?.id||selected);
   const homeHero=main.querySelector('.home-hero');if(homeHero)heroCarousel=new HeroCarousel(homeHero,{initial:selected,onChange:commitModel});
   cleanup.push(setupPageMotion(main));
@@ -54,6 +54,8 @@ document.addEventListener('click',e=>{
   if(e.target.closest('.gallery-enlarge')){const img=main.querySelector('#gallery-image');dialog.querySelector('img').src=img.src;dialog.querySelector('img').alt=img.alt;dialog.querySelector('p').textContent=img.alt;dialog.showModal();return;}
   const a=e.target.closest('a');if(!a||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||a.target)return;
   const url=new URL(a.href,location.href);if(url.origin!==location.origin)return;
+  // The parent homepage has its own lightweight document and navigation.
+  if(url.pathname==='/')return;
   if(url.pathname===location.pathname&&url.search===location.search&&url.hash){menu(false);return;}
   e.preventDefault();menu(false);history.pushState(null,'',url);render();window.scrollTo({top:0,behavior:'instant'});main.focus({preventScroll:true});
 });
