@@ -43,7 +43,7 @@ The original PRD and supplied images/videos/catalogue are preserved. The fronten
 - Six functional model choices on the home page update hero imagery, description, selected state and film sequence. Actual colour/battery variants are unconfirmed and are not invented.
 - Native pinned Canvas films; manual keyboard-accessible slider; pause/resume; three restrained story chapters; forward/reverse scroll mapping; DPR-aware contain sizing; progressive loading; nearest-frame fallback and an explicit missing-sequence state.
 - Model galleries with front/side/rear/context views, accessible modal enlargement and native FAQs.
-- Two/three-model comparison with session-scoped selection, three-model limit and clear selection. Unapproved technical values show “Not available”.
+- Two/three-model comparison with session-scoped selection, three-model limit and clear selection. Qualified technical values come from the shared catalogue records.
 - Custom running-cost calculator with visible editable assumptions, required user-provided EV consumption, input limits, no stale totals, zero-distance handling and honest negative differences.
 - A dedicated true 3D viewer integration after each product gallery. All six real bike models remain explicitly pending; no invented geometry or 2D turntable is presented as a bike model.
 - Static build, local server, Netlify config, security headers, and meaningful native/browser tests.
@@ -150,3 +150,34 @@ References: [Netlify: add a new project / manual publishing](https://docs.netlif
 - Browser evidence is local under `.test-artifacts/` and excluded from Git/public build. Field performance, live integrations and physical-device behaviour are not proven by these tests.
 
 The ongoing implementation and reference-feature checklist is `OBJECTIVES.md`.
+
+## Product details and SEO — 31 October 2026
+
+Confirmed mapping: Aero=B2+ (page 2), Apex=B1 (3), Nova=B2 (4), Teja=B4 (5), Vayu=B5 (7), Vega=B5 Pro (9). This supersedes earlier filename-based candidates. `src/catalogue.js` records visually checked details and conflicting source claims. Product pages and comparison use the same data. Colour swatches are catalogue references, not stock selections. Current retail prices remain request-a-quote; enquiry services are still unavailable.
+
+`src/pages.js` renders routes for the browser and build. `src/seo.js` owns metadata and indexable routes. The build produces complete route HTML, a 404 page, robots.txt, sitemap.xml and Netlify redirects. Vercel uses filesystem routing with clean URLs and the generated 404 page. Preview meta robots applies on both hosts; Netlify also receives a preview X-Robots-Tag. The checked-in sitemap.xml is a ready placeholder using https://example.com; the build regenerates the published sitemap from one origin setting.
+
+### Real-domain switch
+
+Keep SITE_INDEXABLE unset or false for previews. For production set SITE_ORIGIN to the verified HTTPS origin without a path or query, and SITE_INDEXABLE to true. Example PowerShell after replacing the hostname:
+
+```powershell
+$env:SITE_ORIGIN = 'https://your-verified-domain.in'
+$env:SITE_INDEXABLE = 'true'
+npm run build
+npm run preview
+```
+
+Configure the same variables in the production host. Indexing defaults to off. Placeholder, localhost and non-HTTPS origins cannot enable indexing. Production builds remove the global Netlify preview header. Utility/unavailable operational pages keep noindex metadata and stay out of the sitemap. Production robots allows public crawling and excludes operational routes.
+
+Before launch, inspect page source, canonical/social URLs, robots.txt, sitemap.xml, response headers and a direct unknown URL. Confirm public pages have no preview indexing block; validate structured data; verify the real domain in Search Console and submit /sitemap.xml. Change SITE_ORIGIN and rebuild whenever the domain changes. SEO preparation does not satisfy outstanding business launch gates.
+
+Run npm run check and npm run build. Browser verification uses tests/product-browser.test.mjs with an already installed Playwright and Chrome; set PLAYWRIGHT_PATH and CHROME_PATH as needed. Browser evidence goes to .test-artifacts/, excluded from Git and publication. No packages were added.
+
+### Local verification — 31 October 2026
+
+- 13 native/data/SEO tests passed; production build passed.
+- 14 existing browser regression scenarios and 9 motion/3D scenarios passed.
+- Added six-model browser checks passed for battery selection, expandable details, galleries and metadata; responsive widths 320–1440, client navigation, comparison, no-JavaScript content, sitemap and 404 behaviour passed.
+- Desktop/mobile screenshots reviewed; navigation contrast and anchor spacing corrected. Impeccable detector reported no findings for the changed UI targets.
+- Production origin/indexability generation checked locally. Hosted behaviour, Search Console submission, field performance and physical-device/screen-reader testing are not claimed.

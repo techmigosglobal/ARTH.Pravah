@@ -197,6 +197,9 @@ Charging content must be sourced from approved manufacturer/business guidance an
 
 ## 6. Product facts, approval and publication
 
+**31 October 2026 owner-approved update:** Confirmed mappings are Aero=B2+ (page 2), Apex=B1 (3), Nova=B2 (4), Teja=B4 (5), Vayu=B5 (7), Vega=B5 Pro (9). These supersede earlier filename-based candidates below. The owner authorised qualified catalogue specifications on product pages and comparison using the reviewed interactive design. Catalogue prices remain excluded; unresolved claims and actual warranty/configuration availability require confirmation. Operational launch gates remain.
+
+
 ### 6.1 Source hierarchy
 
 1. Owner-approved model/variant information backed by business/manufacturer evidence is publishable.

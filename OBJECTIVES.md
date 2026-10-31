@@ -1,6 +1,6 @@
 # ARTH.Pravah — Active implementation objectives
 
-Updated: 30 October 2026. This checklist tracks requested outcomes, implementation and verification separately. Existing PRD scope and unresolved business inputs remain in `PRD.md`.
+Updated: 31 October 2026. This checklist tracks requested outcomes, implementation and verification separately. Existing PRD scope and unresolved business inputs remain in `PRD.md`.
 
 | ID | Objective | Status | Completion evidence / remaining work |
 | --- | --- | --- | --- |
@@ -46,3 +46,9 @@ Reference: https://www.bhoomiautomobiles.com/ (reviewed 30 October 2026).
 | Extensive model specifications and certification claims | Never copy to ARTH.Pravah without its own approved evidence |
 | EMI, dealer/franchise, B2B, newsletters, additional languages and blog publishing | Backlog candidates; require a later scope decision because the first-release PRD excludes or does not establish these workflows |
 | Reviews, business statistics, subsidies, availability and contacts | Do not import reference-site data or manufacture ARTH.Pravah claims |
+
+## Approved catalogue integration and SEO
+
+The 31 October 2026 owner instruction supersedes older unconfirmed mappings: Aero=B2+ p2, Apex=B1 p3, Nova=B2 p4, Teja=B4 p5, Vayu=B5 p7, Vega=B5 Pro p9. Approved desktop/mobile previews direct key facts, battery exploration, expandable equipment/specifications, catalogue colours, comparison and quote links. Existing films, galleries and pending true-3D integration remain.
+
+Catalogue details are qualified references. Range/warranty conflicts are visible in source notes, prices remain quote-only, and actual configurations/stock require confirmation. Generated route HTML, metadata, factual structured data, sitemap generation, preview indexing controls and a documented domain switch are implemented. No deployment or indexing activation is included.

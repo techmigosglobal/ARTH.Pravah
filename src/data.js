@@ -1,3 +1,4 @@
+import {catalogue} from './catalogue.js';
 export const models = [
   {id:'aero',name:'Aero',line:'A fresh take on the everyday.',description:'City lights. Familiar streets. A different perspective. Meet Aero, the beginning of your next electric chapter.',story:'Find a new rhythm.',detail:'The route may be familiar. The way you see it doesn’t have to be. Explore Aero from the front, the side, and every detail in between.',scene:'The city, seen differently.',chapter:['A first impression','A closer perspective','Details worth a second look']},
   {id:'apex',name:'Apex',line:'A different kind of presence.',description:'An evening in the city. A silhouette that catches your eye. Get to know Apex, one detail at a time.',story:'Stay a little longer.',detail:'Some designs ask for a second look. Step closer to Apex, from its city-night introduction to its individual exterior details.',scene:'After hours. In focus.',chapter:['An evening introduction','A bolder silhouette','Up close with Apex']},
@@ -6,6 +7,7 @@ export const models = [
   {id:'vayu',name:'Vayu',line:'A fresh perspective on purpose.',description:'From workshop scenes to open city views. Discover Vayu and the details that make up its visual story.',story:'Get to know the details.',detail:'Good questions lead to a better choice. Explore Vayu’s exterior and ask us about approved equipment, availability, and your intended use.',scene:'Purpose, in perspective.',chapter:['Meet Vayu','A closer look','The view ahead']},
   {id:'vega',name:'Vega',line:'Your city. A new perspective.',description:'City-night scenes. A distinctive silhouette. Meet Vega and explore a different expression of electric.',story:'Some things deserve a closer look.',detail:'Take in the shape. Explore the details. Discover the visual character of Vega through its gallery and city-night film.',scene:'Night falls. Vega arrives.',chapter:['A city-night introduction','Styling, in focus','The finer details']}
 ];
+for (const model of models) model.specs = catalogue[model.id];
 export const getModel = id => models.find(m=>m.id===id);
 export const media = (id,view='hero') => `/assets/models/${id}/${view}.webp`;
 export const clamp = (n,min=0,max=1) => Math.max(min,Math.min(max,n));
