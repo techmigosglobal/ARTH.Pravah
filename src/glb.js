@@ -102,7 +102,9 @@ export function parseGLB(buffer) {
         const color=material.pbrMetallicRoughness?.baseColorFactor||[.62,.7,.75,1];
         if(color.length!==4||color.some(n=>!Number.isFinite(n)||n<0||n>1))throw new Error('Invalid material colour.');
         if(material.alphaMode==='BLEND')throw new Error('Export opaque or alpha-mask materials for this viewer.');
-        primitives.push({positions,normals,indices,uv,color,texture,unlit:!!material.extensions?.KHR_materials_unlit,alphaCutoff:material.alphaMode==='MASK'?(material.alphaCutoff??.5):0});
+        const metallic=material.pbrMetallicRoughness?.metallicFactor??1,roughness=material.pbrMetallicRoughness?.roughnessFactor??1;
+        if(![metallic,roughness].every(n=>Number.isFinite(n)&&n>=0&&n<=1))throw new Error('Invalid material surface factors.');
+        primitives.push({positions,normals,indices,uv,color,texture,metallic,roughness,unlit:!!material.extensions?.KHR_materials_unlit,alphaCutoff:material.alphaMode==='MASK'?(material.alphaCutoff??.5):0});
       }
     }
     const next=new Set(ancestors);next.add(index);for(const child of node.children||[])walk(child,world,next);

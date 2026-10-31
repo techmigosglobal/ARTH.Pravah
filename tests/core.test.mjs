@@ -47,7 +47,25 @@ test('GLB parser rejects malformed, compressed, out-of-bounds and cyclic scenes'
   const invalid=fixtureGLB();new DataView(invalid).setUint32(0,0,true);assert.throws(()=>parseGLB(invalid));
   for(const alter of [j=>{j.extensionsRequired=['KHR_draco_mesh_compression'];return j;},j=>{j.accessors[0].count=999999;return j;},j=>{j.nodes[0].children=[0];return j;},j=>{j.accessors[0].sparse={count:1};return j;}])assert.throws(()=>parseGLB(fixtureGLB(alter)));
 });
-test('3D bike content is explicitly pending, with no invented model URLs',async()=>{
+test('six Blender reconstructions are real supported meshes with honest provenance',async()=>{
   const manifest=JSON.parse(await readFile(new URL('../assets/3d/manifest.json',import.meta.url),'utf8'));
-  for(const model of models){assert.equal(manifest[model.id].approved,false);assert.equal(manifest[model.id].modelUrl,null);}
+  const fingerprints=new Set();
+  for(const model of models){
+    const item=manifest[model.id];
+    assert.equal(item.approved,false);assert.equal(item.available,true);assert.equal(item.kind,'photo-reconstruction');
+    assert.equal(item.modelUrl,`/assets/3d/${model.id}.glb`);assert.match(item.accuracy,/approximate|unverified/i);
+    const bytes=await readFile(new URL('..'+item.modelUrl,import.meta.url));
+    assert.ok(bytes.length<5*1024*1024,'keep each web asset below 5 MiB');
+    const mesh=parseGLB(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+    assert.ok(mesh.vertices>10000&&mesh.vertices<200000);assert.ok(mesh.primitives.length<=16,'merge components by material');
+    for(const p of mesh.primitives){
+      assert.ok(p.positions.every(Number.isFinite));assert.ok(p.normals.every(Number.isFinite));
+      assert.ok(p.roughness>=0&&p.roughness<=1);assert.ok(p.metallic>=0&&p.metallic<=1);
+    }
+    fingerprints.add(bytes.toString('base64'));
+    const source=await readFile(new URL('../'+item.sourceFile,import.meta.url));
+    // Blender 5 uses a Zstandard-compressed .blend container (28 b5 2f fd).
+    assert.ok(source.length>1000000);assert.ok(source.subarray(0,7).toString()==='BLENDER'||source.readUInt32LE(0)===0xfd2fb528);
+  }
+  assert.equal(fingerprints.size,6,'each model has its own asset');
 });

@@ -1,8 +1,50 @@
 {
-  "aero": { "approved": false, "modelUrl": null },
-  "apex": { "approved": false, "modelUrl": null },
-  "nova": { "approved": false, "modelUrl": null },
-  "teja": { "approved": false, "modelUrl": null },
-  "vayu": { "approved": false, "modelUrl": null },
-  "vega": { "approved": false, "modelUrl": null }
+  "aero": {
+    "modelUrl": "/assets/3d/aero.glb",
+    "approved": false,
+    "available": true,
+    "kind": "photo-reconstruction",
+    "accuracy": "Approximate visual reconstruction from supplied photos; dimensions and hidden details are unverified.",
+    "sourceFile": "models/blender/aero.blend"
+  },
+  "apex": {
+    "modelUrl": "/assets/3d/apex.glb",
+    "approved": false,
+    "available": true,
+    "kind": "photo-reconstruction",
+    "accuracy": "Approximate visual reconstruction from supplied photos; dimensions and hidden details are unverified.",
+    "sourceFile": "models/blender/apex.blend"
+  },
+  "nova": {
+    "modelUrl": "/assets/3d/nova.glb",
+    "approved": false,
+    "available": true,
+    "kind": "photo-reconstruction",
+    "accuracy": "Approximate visual reconstruction from supplied photos; dimensions and hidden details are unverified.",
+    "sourceFile": "models/blender/nova.blend"
+  },
+  "teja": {
+    "modelUrl": "/assets/3d/teja.glb",
+    "approved": false,
+    "available": true,
+    "kind": "photo-reconstruction",
+    "accuracy": "Approximate visual reconstruction from supplied photos; dimensions and hidden details are unverified.",
+    "sourceFile": "models/blender/teja.blend"
+  },
+  "vayu": {
+    "modelUrl": "/assets/3d/vayu.glb",
+    "approved": false,
+    "available": true,
+    "kind": "photo-reconstruction",
+    "accuracy": "Approximate visual reconstruction from supplied photos; dimensions and hidden details are unverified.",
+    "sourceFile": "models/blender/vayu.blend"
+  },
+  "vega": {
+    "modelUrl": "/assets/3d/vega.glb",
+    "approved": false,
+    "available": true,
+    "kind": "photo-reconstruction",
+    "accuracy": "Approximate visual reconstruction from supplied photos; dimensions and hidden details are unverified.",
+    "sourceFile": "models/blender/vega.blend"
+  }
 }

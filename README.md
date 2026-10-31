@@ -26,7 +26,7 @@ npm run preview
 | --- | --- |
 | `index.html` | Document, navigation, footer and gallery dialog |
 | `src/app.js`, `src/data.js`, `src/sequence.js`, `src/styles.css`, `src/hero-carousel.js`, `src/motion.js`, `src/motion.css`, `src/glb.js`, `src/bike-viewer.js` | Public routes, model/calculation logic, scroll films, native hero/motion system and static GLB/WebGL viewer |
-| `assets/models/`, `assets/frames/`, `assets/fonts/`, `assets/3d/manifest.json` | 24 optimised model images, 504 real extracted frames, actual-file manifest, local font/licence, and explicit pending 3D model manifest |
+| `assets/models/`, `assets/frames/`, `assets/fonts/`, `assets/3d/manifest.json` | 24 optimised model images, 504 real extracted frames, actual-file manifest, local font/licence, and six photo-based 3D preview assets |
 | `scripts/prepare-media.py`, `scripts/build.mjs`, `scripts/serve.mjs` | Optional source preparation, dependency-free production build and local preview server |
 | `tests/core.test.mjs`, `tests/browser.test.mjs`, `tests/motion-browser.test.mjs`, `tests/glb-fixture.mjs` | Native logic/media checks and browser scenarios |
 | `package.json`, `netlify.toml`, `vercel.json`, `_headers`, `robots.txt`, `.gitignore` | Run commands, deployment settings, headers, preview indexing controls and generated-file exclusions |
@@ -45,7 +45,7 @@ The original PRD and supplied images/videos/catalogue are preserved. The fronten
 - Model galleries with front/side/rear/context views, accessible modal enlargement and native FAQs.
 - Two/three-model comparison with session-scoped selection, three-model limit and clear selection. Qualified technical values come from the shared catalogue records.
 - Custom running-cost calculator with visible editable assumptions, required user-provided EV consumption, input limits, no stale totals, zero-distance handling and honest negative differences.
-- A dedicated true 3D viewer integration after each product gallery. All six real bike models remain explicitly pending; no invented geometry or 2D turntable is presented as a bike model.
+- A dedicated true 3D viewer integration after each product gallery. All six pages offer Blender-authored photo-based reconstructions, with persistent approximation labels and a photo fallback.
 - Static build, local server, Netlify config, security headers, and meaningful native/browser tests.
 
 ## Frame assets and loading
@@ -60,22 +60,35 @@ To regenerate derivatives, the optional `scripts/prepare-media.py` requires the 
 
 The local Adwaita Sans font and its licence are included in `assets/fonts/`.
 
-## Accurate 3D model handoff
+## Blender models and interactive 3D
 
-The user explicitly chose accurate supplied models rather than generated approximations. **No real bike 3D model is currently available.** Each product page includes a section after its photo gallery, linked from its product navigation, with an honest pending state and disabled rotation controls.
+The 31 October 2026 instruction authorizes creating models from the supplied photographs and integrating them into the current site. This supersedes the earlier wait-for-manufacturer-assets decision. These are **approximate visual reconstructions**, not scans, engineering CAD, or manufacturer-approved assets. The viewer labels them as photo-based previews before and after loading. Actual dimensions and hidden details remain unverified; compare the original gallery for product appearance.
 
-The native WebGL viewer is ready to load a configured approved GLB on user request. It supports pointer drag, keyboard arrows, zoom buttons/plus/minus, Home/reset, responsive DPR-aware rendering, neutral studio lighting, base-colour material/embedded textures, resize, context-loss errors, cleanup and a usable photo fallback. Rendering is demand-driven; there is no automatic 3D spin, no wheel-scroll capture, and vertical touch scrolling is retained. It is a bounded static GLB subset, not a complete glTF/PBR engine.
+- `models/blender/{aero,apex,nova,teja,vayu,vega}.blend`: editable sources, named components, four packed reference images per product, metric scene settings, camera and neutral studio lighting. Source files stay outside the production allowlist.
+- `scripts/generate-models.py`: repeatable Blender construction and export. Each product has its own paint, lighting layout and styling parameters. Shared scooter components include shaped bodywork, wheels, brake rotor, suspension coils, handlebars, mirrors, footboard, saddle and rear lamps. Geometry and unobserved construction are approximations.
+- `assets/3d/{id}.glb`: real standalone geometry exported by Blender, with material groups merged for web rendering. No runtime dependencies or external generation API are required.
+- `assets/3d/manifest.json`: `available: true` and `kind: "photo-reconstruction"` enable the labeled preview while `approved: false` preserves the distinction from approved manufacturer assets. Missing entries and other unapproved kinds stay pending. An actual approved replacement may use `approved: true`.
 
-Asset contract for later delivery:
+Regenerate all six from the repository root in PowerShell:
 
-- One owner-approved, accurate static **GLB 2.0** per relevant model/variant; no guessed filename is configured now.
-- A single embedded binary buffer, uncompressed triangle meshes, finite positions, valid indices, optional normals (otherwise generated) and TEXCOORD_0 when textured. Scene node transforms are supported.
-- Embedded PNG/JPEG/WebP base-colour textures; maximum 4096 pixels per side. Opaque or alpha-mask materials. Neutral lighting and base-colour rendering are supported; full metallic/roughness, normal-map and transparent-glass material rendering are not implemented.
-- Maximum 25 MiB per GLB and one million rendered vertices. Prefer substantially smaller web-optimised assets. No Draco/Meshopt compression, external buffers/textures, skeletal animation, morph targets, transformed UVs or unsupported required extensions. Re-export to this supported subset rather than installing a decoder or silently dropping geometry.
-- Put the approved file within `assets/3d/`, then set that model’s `modelUrl` to the file’s actual same-origin URL under `/assets/3d/` and set `approved` to `true` in `assets/3d/manifest.json`. Keep `null`/`false` for all missing or unapproved models.
-- Rebuild, verify all viewpoints against real photos, check drag/keyboard/zoom/reset/mobile performance, and approve accuracy before public release. Unsupported or failed files report the limitation and preserve photo access; they never select a substitute bike.
+```powershell
+& 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe' --background --python scripts/generate-models.py
+```
 
-`OBJECTIVES.md` distinguishes prepared viewer integration from missing bike content and records Bhoomi Automobiles as the continuing feature/interactivity reference. Features excluded from the current PRD stay in the reference backlog until separately approved.
+Append `-- aero` to regenerate only Aero, or a space-separated selection of model IDs. The generator writes editable sources and GLBs and updates the manifest after each completed product. No installation or credentials are needed. The photos remain unchanged.
+
+The native WebGL viewer loads geometry only on request and renders only on interaction or resize. It supports drag, arrow keys, zoom buttons/plus/minus, Home/reset, touch-friendly vertical scrolling, context loss and a photo fallback. Material base colour, scalar metallic and roughness values drive lightweight studio shading; it is not a full glTF PBR renderer. No normal maps, transparent glass, skeletal animation or compression decoder are implemented. Replacement GLBs must contain one embedded buffer, uncompressed static triangles, valid normals/positions and embedded PNG/JPEG/WebP base-colour textures if used. Limits: 25 MiB, one million rendered vertices, textures at most 4096 pixels per side. Model URLs must be same-origin under `/assets/3d/`.
+
+The native tests validate all six real assets through the same parser used by the viewer, file size, geometry limits, material values, uniqueness and Blender source containers. `tests/models-browser.test.mjs` exercises lazy loading, real pixels, rotation, zoom, keyboard reset, mouse drag, desktop/mobile widths, disclosure, console errors and malformed/missing/untrusted asset fallbacks. Use the existing Playwright installation:
+
+```powershell
+$env:PLAYWRIGHT_PATH='C:/Users/Vinay/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'
+$env:CHROME_PATH='C:/Program Files/Google/Chrome/Application/chrome.exe'
+$env:TEST_URL='http://127.0.0.1:4174'
+node tests/models-browser.test.mjs
+```
+
+Browser evidence goes to the system temporary directory `arth-pravah-3d`, or `TEST_ARTIFACTS` when set. Visual refinement and accuracy review remain necessary before treating these as authoritative product representations. Website integration and testing are local; no hosted deployment is implied.
 
 ## Required business/backend work
 
@@ -89,7 +102,7 @@ The original `PRD.md` and source media are preserved.
 
 ## Browser verification
 
-`npm run check` needs only Node and runs syntax checks plus eight native tests covering frame mapping, aspect ratio, calculator arithmetic/validation, real media paths and absence of added libraries, static GLB decoding and intentionally pending 3D content.
+`npm run check` needs only Node and runs syntax checks plus thirteen native tests covering frame mapping, aspect ratio, calculator arithmetic/validation, real media paths and absence of added libraries, static GLB decoding and six real photo-based 3D reconstructions.
 
 `tests/browser.test.mjs` uses an already installed Playwright and Chrome; it does not install either. Run a production preview server, then:
 
@@ -97,9 +110,9 @@ The original `PRD.md` and source media are preserved.
 PLAYWRIGHT_PATH=/absolute/path/to/existing/playwright CHROME_PATH=/path/to/existing/chrome node tests/browser.test.mjs
 ```
 
-In this workspace, the existing Playwright path is `/home/vinay/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright` and Chrome is `/usr/bin/google-chrome`. Set `TEST_URL` if using another local port. Browser screenshots and machine-readable results are written to ignored `.test-artifacts/`.
+In this Windows workspace, the existing Playwright path is `C:/Users/Vinay/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright` and Chrome is `C:/Program Files/Google/Chrome/Application/chrome.exe`. Set `TEST_URL` if using another local port. Browser screenshots and machine-readable results are written to ignored `.test-artifacts/`.
 
-The browser suite checks real Canvas pixel changes during forward/reverse scrolling, progressive initial loading, pause/scrub, six model switches, galleries, comparison, cost arithmetic, route states, mobile/tablet widths, reduced motion, individual/all missing frames and normal-journey console errors. The additional `tests/motion-browser.test.mjs` uses the same command/environment pattern and checks nine scenarios: real hero autoplay, manual controls/rapid selection, focus/offscreen holds, global pause, mobile/reduced motion, all six pending 3D states, native WebGL geometry rotation/zoom/reset/drag, invalid-file fallback and console errors. Its GLB fixture is synthetic non-bike geometry, intercepted only within the test browser, never part of the public model manifest. It proves renderer infrastructure, not accurate 3D bike content.
+The browser suite checks real Canvas pixel changes during forward/reverse scrolling, progressive initial loading, pause/scrub, six model switches, galleries, comparison, cost arithmetic, route states, mobile/tablet widths, reduced motion, individual/all missing frames and normal-journey console errors. The additional `tests/motion-browser.test.mjs` uses the same command/environment pattern and checks nine scenarios: real hero autoplay, manual controls/rapid selection, focus/offscreen holds, global pause, mobile/reduced motion, all six available 3D previews, native WebGL geometry rotation/zoom/reset/drag, invalid-file fallback and console errors. Its GLB fixture is synthetic non-bike geometry, intercepted only within the test browser, never part of the public model manifest. It proves renderer infrastructure, not accurate 3D bike content.
 
 It does not prove live messaging, backend access control, PRD production readiness, field Core Web Vitals or hosted behaviour.
 

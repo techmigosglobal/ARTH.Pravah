@@ -144,6 +144,7 @@
 .bike3d-toolbar button:not(:disabled):hover { background:var(--teal); }
 .bike3d-toolbar>span { height:24px;width:1px;background:#90a6a64d;margin:0 10px; }
 .bike3d-status { text-align:center;margin-top:17px; }
+.bike3d-disclosure { text-align:center;max-width:600px;margin:18px auto 0; }
 @media(max-width:520px) {
   .bike3d-section { padding-top:15px; }
   .bike3d-stage { min-height:440px;height:auto; }

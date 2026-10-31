@@ -49,9 +49,9 @@ try{
    const reduced=await browser.newContext({reducedMotion:'reduce',viewport:{width:375,height:844}}),p=await reduced.newPage();await p.goto(base);await p.waitForLoadState('networkidle');assert.equal(await p.locator('.home-hero').getAttribute('data-running'),'false');
    await p.locator('[data-hero-slide=nova]').click();await p.waitForFunction(()=>document.querySelector('.home-hero').dataset.model==='nova');assert.equal(await p.locator('canvas').first().getAttribute('data-state'),'reduced');await reduced.close();
  });
- await check('six product pages place an honest pending 3D viewer beside gallery with disabled controls',async()=>{
-   for(const id of ['aero','apex','nova','teja','vayu','vega']){await page.goto(base+'/models/'+id);await page.waitForLoadState('networkidle');assert.equal(await page.locator('.bike3d-section').getAttribute('data-state'),'pending');assert.equal(await page.locator('.bike3d-canvas').isVisible(),false);assert.equal(await page.locator('[data-3d-action]:not(:disabled)').count(),0);assert.match(await page.locator('.bike3d-status').innerText(),/pending/);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
-   await page.locator('#explore-3d').scrollIntoViewIfNeeded();await page.screenshot({path:'.test-artifacts/3d-pending-mobile.png'});
+ await check('six product pages offer lazy photo-based 3D previews beside the gallery',async()=>{
+   for(const id of ['aero','apex','nova','teja','vayu','vega']){await page.goto(base+'/models/'+id);await page.waitForLoadState('networkidle');assert.equal(await page.locator('.bike3d-section').getAttribute('data-state'),'available');assert.equal(await page.locator('.bike3d-canvas').isVisible(),false);assert.equal(await page.locator('[data-3d-action]:not(:disabled)').count(),0);assert.match(await page.locator('.bike3d-placeholder .pill').innerText(),/PHOTO-BASED/);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+   await page.locator('#explore-3d').scrollIntoViewIfNeeded();await page.screenshot({path:'.test-artifacts/3d-available-mobile.png'});
  });
  await check('native WebGL renders synthetic geometry and changes real pixels on rotation, zoom and reset',async()=>{
    const p=await context.newPage();
@@ -61,11 +61,11 @@ try{
    await p.waitForFunction(()=>document.querySelector('.bike3d-section').dataset.state==='ready');await p.waitForFunction(()=>Number(document.querySelector('.bike3d-canvas').dataset.draws)>0);
    const first=await p.locator('.bike3d-canvas').evaluate(c=>c.toDataURL());
    const pixels=await p.locator('.bike3d-canvas').evaluate(c=>{const g=c.getContext('webgl'),p=new Uint8Array(c.width*c.height*4);g.readPixels(0,0,c.width,c.height,g.RGBA,g.UNSIGNED_BYTE,p);let painted=0;for(let i=3;i<p.length;i+=4)if(p[i])painted++;return painted;});assert.ok(pixels>1000,'actual triangles must be visible');
-   await p.getByRole('button',{name:'Rotate model right'}).click();await p.waitForFunction(()=>Number(document.querySelector('.bike3d-canvas').dataset.yaw)>.7);
+   await p.getByRole('button',{name:'Rotate model right'}).click();await p.waitForFunction(()=>Number(document.querySelector('.bike3d-canvas').dataset.yaw)>-.6);
    const rotated=await p.locator('.bike3d-canvas').evaluate(c=>c.toDataURL());assert.notEqual(rotated,first);
    await p.getByRole('button',{name:'Zoom in',exact:true}).click();await p.waitForFunction(()=>Number(document.querySelector('.bike3d-canvas').dataset.distance)<4.4);
-   await p.locator('.bike3d-canvas').focus();await p.keyboard.press('ArrowLeft');await p.keyboard.press('Home');await p.waitForFunction(()=>document.querySelector('.bike3d-canvas').dataset.yaw==='0.65'&&document.querySelector('.bike3d-canvas').dataset.distance==='4.4');
-   const box=await p.locator('.bike3d-canvas').boundingBox();await p.mouse.move(box.x+box.width/2,box.y+box.height/2);await p.mouse.down();await p.mouse.move(box.x+box.width/2+80,box.y+box.height/2+25,{steps:5});await p.mouse.up();await p.waitForFunction(()=>Number(document.querySelector('.bike3d-canvas').dataset.yaw)>1);
+   await p.locator('.bike3d-canvas').focus();await p.keyboard.press('ArrowLeft');await p.keyboard.press('Home');await p.waitForFunction(()=>document.querySelector('.bike3d-canvas').dataset.yaw==='-0.65'&&document.querySelector('.bike3d-canvas').dataset.distance==='4.4');
+   const box=await p.locator('.bike3d-canvas').boundingBox();await p.mouse.move(box.x+box.width/2,box.y+box.height/2);await p.mouse.down();await p.mouse.move(box.x+box.width/2+80,box.y+box.height/2+25,{steps:5});await p.mouse.up();await p.waitForFunction(()=>Number(document.querySelector('.bike3d-canvas').dataset.yaw)>0);
    await p.close();
  });
  await check('bad 3D files produce explicit errors without a substitute model',async()=>{

@@ -20,6 +20,8 @@ uniform vec3 uEye;
 uniform bool uHasTexture;
 uniform bool uUnlit;
 uniform float uAlphaCutoff;
+uniform float uMetallic;
+uniform float uRoughness;
 uniform sampler2D uTexture;
 void main(){
   vec4 base=uColor;if(uHasTexture){vec4 tex=texture2D(uTexture,vUV);base*=vec4(pow(tex.rgb,vec3(2.2)),tex.a);}
@@ -28,8 +30,12 @@ void main(){
   float key=max(dot(n,normalize(vec3(1.0,1.4,1.8))),0.0);
   float fill=max(dot(n,normalize(vec3(-1.5,.5,-.8))),0.0);
   vec3 viewDir=normalize(uEye-vPosition),halfDir=normalize(normalize(vec3(1.0,1.4,1.8))+viewDir);
-  float spec=pow(max(dot(n,halfDir),0.0),38.0)*.16;
-  vec3 lit=base.rgb*(.3+.62*key+.2*fill)+vec3(spec);
+  float gloss=mix(100.0,8.0,uRoughness);
+  float spec=pow(max(dot(n,halfDir),0.0),gloss);
+  vec3 reflected=reflect(-viewDir,n);
+  float softbox=pow(max(dot(reflected,normalize(vec3(-.5,1.5,1.0))),0.0),12.0);
+  vec3 specColor=mix(vec3(.08),base.rgb,uMetallic);
+  vec3 lit=base.rgb*(.28+.65*key+.3*fill)+specColor*(spec*.8+softbox*.7);
   gl_FragColor=vec4(pow(max(uUnlit?base.rgb:lit,vec3(0.0)),vec3(1.0/2.2)),1.0);
 }`;
 
@@ -55,9 +61,12 @@ export class BikeViewer {
   constructor(section, model) {
     this.section=section;this.model=model;this.canvas=section.querySelector('.bike3d-canvas');
     this.status=section.querySelector('.bike3d-status');this.placeholder=section.querySelector('.bike3d-placeholder');
+    this.disclosure=document.createElement('p');this.disclosure.className='bike3d-disclosure small-note';this.disclosure.hidden=true;
+    this.disclosure.textContent='Photo-based 3D preview. Proportions and hidden details are approximate. Compare with the original photos.';
+    this.status.before(this.disclosure);
     this.loadButton=section.querySelector('[data-load-3d]');this.controls=[...section.querySelectorAll('[data-3d-action]')];
     this.events=new AbortController();this.controller=new AbortController();this.resources=[];this.frame=0;this.destroyed=false;this.busy=false;this.ready=false;
-    this.yaw=.65;this.pitch=.18;this.distance=4.4;
+    this.yaw=-.65;this.pitch=.18;this.distance=4.4;
     this.canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();this.ready=false;this.showError('The 3D graphics context was interrupted. Use the photos or retry the model.');},{signal:this.events.signal});
     this.canvas.addEventListener('webglcontextrestored',()=>{this.resources=[];this.ready=false;this.showError('Graphics are available again. Load the model to continue.');},{signal:this.events.signal});
     this.loadButton.addEventListener('click',()=>this.load(),{signal:this.events.signal});
@@ -89,21 +98,24 @@ export class BikeViewer {
       const response=await fetch('/assets/3d/manifest.json',{signal:this.controller.signal});if(!response.ok)throw new Error('manifest');
       const manifest=await response.json();if(this.destroyed)return;
       const item=manifest[this.model];
-      if(!item?.approved||!item.modelUrl){this.section.dataset.state='pending';this.status.textContent='Accurate 3D model pending. Photo views remain available.';return;}
+      const reconstruction=item?.available===true&&item.kind==='photo-reconstruction';
+      if((!item?.approved&&!reconstruction)||!item.modelUrl){this.section.dataset.state='pending';this.status.textContent='Accurate 3D model pending. Photo views remain available.';return;}
       const url=new URL(item.modelUrl,location.origin);
       if(url.origin!==location.origin||!url.pathname.startsWith('/assets/3d/')||!url.pathname.endsWith('.glb'))throw new Error('model location');
       this.modelUrl=url.href;this.loadButton.hidden=false;this.section.dataset.state='available';
-      this.placeholder.querySelector('.pill').textContent='APPROVED 3D MODEL';
+      this.section.dataset.modelKind=reconstruction?'photo-reconstruction':'approved';
+      this.placeholder.querySelector('.pill').textContent=reconstruction?'PHOTO-BASED 3D PREVIEW':'APPROVED 3D MODEL';
       this.section.querySelector('.section-heading>p').textContent='Load the model. Drag to rotate, zoom and reset.';
       this.placeholder.querySelector('h3').textContent='A new perspective, in three dimensions.';
-      this.placeholder.querySelector('p').textContent='Load the approved model, then drag to rotate. The 3D file loads only when you choose to open it.';
+      this.placeholder.querySelector('p').textContent=reconstruction?'Explore a 3D reconstruction based on the supplied photos. Shape and details are approximate; use the gallery to see the actual scooter.':'Load the approved model, then drag to rotate. The 3D file loads only when you choose to open it.';
+      this.disclosure.hidden=!reconstruction;
       this.status.textContent='3D model available. Choose Load 3D view to begin.';
     }catch(error){if(!this.destroyed&&error.name!=='AbortError'){this.section.dataset.state='pending';this.status.textContent='3D availability could not be checked. The photo gallery is still available.';}}
   }
 
   async load() {
     if(!this.modelUrl||this.busy||this.destroyed)return;
-    this.busy=true;this.loadButton.disabled=true;this.section.setAttribute('aria-busy','true');this.section.dataset.state='loading';this.status.textContent='Loading the approved 3D model…';
+    this.busy=true;this.loadButton.disabled=true;this.section.setAttribute('aria-busy','true');this.section.dataset.state='loading';this.status.textContent='Loading the 3D model…';
     try{
       this.disposeGPU();
       this.gl=this.canvas.getContext('webgl',{alpha:true,antialias:true,preserveDrawingBuffer:true});
@@ -128,12 +140,12 @@ export class BikeViewer {
     this.fallbackTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.fallbackTexture);
     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-    this.locations={};for(const name of ['uProjection','uView','uColor','uEye','uHasTexture','uTexture','uUnlit','uAlphaCutoff'])this.locations[name]=gl.getUniformLocation(program,name);
+    this.locations={};for(const name of ['uProjection','uView','uColor','uEye','uHasTexture','uTexture','uUnlit','uAlphaCutoff','uMetallic','uRoughness'])this.locations[name]=gl.getUniformLocation(program,name);
     this.attributes={};for(const name of ['aPosition','aNormal','aUV'])this.attributes[name]=gl.getAttribLocation(program,name);
     for(const primitive of model.primitives){
       if(this.destroyed)return;
       if(primitive.indices instanceof Uint32Array&&!gl.getExtension('OES_element_index_uint'))throw new Error('This browser cannot render the supplied mesh size. Use the photos instead.');
-      const resource={buffers:[],count:primitive.indices.length,type:primitive.indices instanceof Uint32Array?gl.UNSIGNED_INT:gl.UNSIGNED_SHORT,color:primitive.color,unlit:primitive.unlit,alphaCutoff:primitive.alphaCutoff};
+      const resource={buffers:[],count:primitive.indices.length,type:primitive.indices instanceof Uint32Array?gl.UNSIGNED_INT:gl.UNSIGNED_SHORT,color:primitive.color,metallic:primitive.metallic,roughness:primitive.roughness,unlit:primitive.unlit,alphaCutoff:primitive.alphaCutoff};
       this.resources.push(resource);
       for(const [data,target] of [[primitive.positions,gl.ARRAY_BUFFER],[primitive.normals,gl.ARRAY_BUFFER],[primitive.uv,gl.ARRAY_BUFFER],[primitive.indices,gl.ELEMENT_ARRAY_BUFFER]]){
         const buffer=gl.createBuffer();gl.bindBuffer(target,buffer);gl.bufferData(target,data,gl.STATIC_DRAW);resource.buffers.push(buffer);
@@ -154,7 +166,7 @@ export class BikeViewer {
     if(action==='left')this.yaw-=.18;if(action==='right')this.yaw+=.18;
     if(action==='up')this.pitch=Math.max(-1.25,this.pitch-.12);if(action==='down')this.pitch=Math.min(1.25,this.pitch+.12);
     if(action==='in')this.distance=Math.max(2.6,this.distance-.35);if(action==='out')this.distance=Math.min(8,this.distance+.35);
-    if(action==='reset'){this.yaw=.65;this.pitch=.18;this.distance=4.4;}
+    if(action==='reset'){this.yaw=-.65;this.pitch=.18;this.distance=4.4;}
     this.schedule();
   }
 
@@ -169,6 +181,7 @@ export class BikeViewer {
     for(const r of this.resources){
       for(const [i,name,size] of [[0,'aPosition',3],[1,'aNormal',3],[2,'aUV',2]]){gl.bindBuffer(gl.ARRAY_BUFFER,r.buffers[i]);gl.enableVertexAttribArray(this.attributes[name]);gl.vertexAttribPointer(this.attributes[name],size,gl.FLOAT,false,0,0);}
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,r.buffers[3]);gl.uniform4fv(this.locations.uColor,r.color);gl.uniform1i(this.locations.uUnlit,r.unlit);gl.uniform1f(this.locations.uAlphaCutoff,r.alphaCutoff);gl.uniform1i(this.locations.uHasTexture,!!r.texture);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,r.texture||this.fallbackTexture);gl.uniform1i(this.locations.uTexture,0);
+      gl.uniform1f(this.locations.uMetallic,r.metallic);gl.uniform1f(this.locations.uRoughness,r.roughness);
       gl.drawElements(gl.TRIANGLES,r.count,r.type,0);
     }
     this.canvas.dataset.yaw=String(this.yaw);this.canvas.dataset.distance=String(this.distance);this.canvas.dataset.draws=String(Number(this.canvas.dataset.draws||0)+1);
