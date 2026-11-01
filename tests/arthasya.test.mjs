@@ -6,13 +6,14 @@ import {pageSEO,siteSettings,allPaths} from '../src/seo.js';
 
 test('parent homepage is complete static HTML with its own branding and lightweight entrypoint',async()=>{
   const html=await documentFor('/');
-  assert.equal((html.match(/<h1\b/g)||[]).length,1);
-  for(const label of ['Connecting','Four businesses. One Arthasya.','Export','arth.pravah','arth.urja','arth.gati','A shared vision.','Let’s start a conversation.'])assert.ok(html.includes(label),label);
-  assert.match(html,/src="\/assets\/arthasya\/logo.png"/);
+  assert.equal((html.match(/<h1\b/g)||[]).length,4);
+  for(const label of ['Trade that travels.','Electric, every day.','Charge the next move.','Fleet built to move.','Four ways forward.','Export','arth.pravah','arth.urja','arth.gati','Built around movement.'])assert.ok(html.includes(label),label);
+  assert.match(html,/src="\/assets\/arthasya\/logo-transparent.png"/);
   assert.match(html,/alt="Arthasya — Value with purpose"/);
   assert.match(html,/href="\/arth.pravah"/);
   assert.match(html,/src="\/src\/arthasya-client.js"/);
-  assert.doesNotMatch(html,/src="\/src\/app.js"|<canvas|<form|ARTH.Pravah home/);
+  assert.match(html,/slide-export\.png/);
+  assert.doesNotMatch(html,/src="\/src\/app.js"|<canvas|<form|ARTH.Pravah home|A shared vision/);
   assert.match(html,/Online enquiries are not yet available/);
 });
 
@@ -36,4 +37,11 @@ test('owner-supplied logo retains its complete original dimensions',async()=>{
   const supplied=await readFile(new URL('../assets/arthasya/logo.png',import.meta.url));
   assert.equal(supplied.readUInt32BE(16),480);
   assert.equal(supplied.readUInt32BE(20),510);
+});
+
+test('transparent Arthasya logo is an RGBA asset with a cropped canvas',async()=>{
+  const transparent=await readFile(new URL('../assets/arthasya/logo-transparent.png',import.meta.url));
+  assert.equal(transparent.toString('ascii',1,4),'PNG');
+  assert.equal(transparent[25],6);
+  assert.ok(transparent.readUInt32BE(16)>0&&transparent.readUInt32BE(20)>0);
 });

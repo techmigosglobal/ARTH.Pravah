@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 510" role="img" aria-labelledby="title desc">
+  <title id="title">Arthasya</title>
+  <desc id="desc">Arthasya — Value with purpose</desc>
+  <g fill="none" stroke-linejoin="round">
+    <path fill="#f15b4d" stroke="#f15b4d" d="M240 5 253 34 282 47 253 60 240 90 227 60 198 47 227 34Z"/>
+    <path fill="#e4ddd3" stroke="#fff" stroke-width="6" d="M235 91 205 262 39 356 240 263 240 91Z"/>
+    <path fill="#e4ddd3" stroke="#fff" stroke-width="6" d="M245 91 275 262 441 356 240 263 240 91Z"/>
+    <path fill="#7f8284" stroke="#fff" stroke-width="6" d="M40 356 240 263 440 356 240 318Z"/>
+  </g>
+  <text x="240" y="438" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="66" font-weight="700" letter-spacing="-2" fill="#f15b4d">ARTHASYA</text>
+  <text x="240" y="484" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="600" letter-spacing="2.4" fill="#d8d0c6">VALUE WITH PURPOSE</text>
+</svg>
