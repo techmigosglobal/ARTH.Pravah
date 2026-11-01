@@ -20,7 +20,7 @@ try{
   assert.equal(await page.locator('.arth-slide.is-active h1').textContent(),'Electric, every day.');
   await page.getByRole('link',{name:'Explore EV bikes',exact:true}).first().click();await page.waitForURL(base+'/arth.pravah');
   assert.equal(await page.locator('.home-hero').count(),1);
-  await page.goto(base);await page.waitForLoadState('networkidle');await page.getByRole('button',{name:'Show arth.gati'}).click();await page.waitForTimeout(100);
+  await page.goto(base);await page.waitForLoadState('networkidle');await page.getByRole('button',{name:'Show arth.urja'}).click();await page.waitForTimeout(100);assert.equal(await page.locator('.arth-slider').evaluate(e=>getComputedStyle(e).getPropertyValue('--slide-accent').trim()),'#4ddf8c');await page.getByRole('button',{name:'Show arth.gati'}).click();await page.waitForTimeout(100);assert.equal(await page.locator('.arth-slider').evaluate(e=>getComputedStyle(e).getPropertyValue('--slide-accent').trim()),'#f2c14e');
   assert.equal(await page.locator('.arth-slide.is-active h1').textContent(),'Fleet built to move.');
   await page.keyboard.press('ArrowLeft');assert.equal(await page.locator('.arth-slide.is-active h1').textContent(),'Charge the next move.');
   await page.getByRole('button',{name:'Play'}).click();await page.getByRole('button',{name:'Pause'}).click();const paused=await page.locator('.arth-slide.is-active h1').textContent();await page.waitForTimeout(7000);assert.equal(await page.locator('.arth-slide.is-active h1').textContent(),paused);

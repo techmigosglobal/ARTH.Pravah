@@ -14,10 +14,11 @@ if(slider){
   const progress=slider.querySelector('[data-slide-progress]');
   const pauseButton=slider.querySelector('[data-slider-pause]');
   const pauseLabel=slider.querySelector('[data-pause-label]');
+  const rows=[...document.querySelectorAll('[data-business-row]')];
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   let index=Math.max(0,slides.findIndex(s=>s.classList.contains('is-active')));
   let timer=null, playing=!reduceMotion.matches, wasPlaying=playing, pointerStart=null;
-  const render=()=>{slides.forEach((slide,i)=>{const active=i===index;slide.classList.toggle('is-active',active);slide.setAttribute('aria-hidden',String(!active));const link=slide.querySelector('.arth-slide-link');if(link)link.tabIndex=active?0:-1;});tabs.forEach((tab,i)=>{const active=i===index;tab.classList.toggle('is-active',active);tab.setAttribute('aria-current',String(active));});if(current)current.textContent=String(index+1).padStart(2,'0');if(progress)progress.style.width=`${((index+1)/slides.length)*100}%`;};
+  const render=()=>{const activeId=slides[index]?.dataset.slide;slider.dataset.theme=activeId;slides.forEach((slide,i)=>{const active=i===index;slide.classList.toggle('is-active',active);slide.setAttribute('aria-hidden',String(!active));const link=slide.querySelector('.arth-slide-link');if(link)link.tabIndex=active?0:-1;});tabs.forEach((tab,i)=>{const active=i===index;tab.classList.toggle('is-active',active);tab.setAttribute('aria-current',String(active));});rows.forEach(row=>row.classList.toggle('is-featured',row.dataset.theme===activeId));if(current)current.textContent=String(index+1).padStart(2,'0');if(progress)progress.style.width=`${((index+1)/slides.length)*100}%`;};
   const stop=()=>{if(timer){clearInterval(timer);timer=null;}};
   const start=()=>{stop();if(reduceMotion.matches||!playing||document.hidden)return;timer=setInterval(()=>go(index+1),6500);};
   const go=next=>{index=(next+slides.length)%slides.length;render();start();};
@@ -29,6 +30,9 @@ if(slider){
   slider.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();setPlaying(false);go(index+1);}if(event.key==='ArrowLeft'){event.preventDefault();setPlaying(false);go(index-1);}if((event.key===' '||event.key==='Enter')&&event.target===slider){event.preventDefault();setPlaying(!playing);}});
   slider.addEventListener('pointerdown',event=>{if(event.target.closest('button,a'))return;pointerStart={x:event.clientX,y:event.clientY};});
   slider.addEventListener('pointerup',event=>{if(!pointerStart)return;const dx=event.clientX-pointerStart.x;const dy=event.clientY-pointerStart.y;pointerStart=null;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)){setPlaying(false);go(index+(dx<0?1:-1));}});
+  slider.addEventListener('pointermove',event=>{if(reduceMotion.matches||event.target.closest('button,a'))return;const rect=slider.getBoundingClientRect();const x=(event.clientX-rect.left)/rect.width-.5;const y=(event.clientY-rect.top)/rect.height-.5;slider.classList.toggle('is-pointer-left',x<-.12);slider.classList.toggle('is-pointer-right',x>.12);slider.classList.toggle('is-pointer-up',y<-.12);slider.classList.toggle('is-pointer-down',y>.12);});
+  slider.addEventListener('pointerleave',()=>slider.classList.remove('is-pointer-left','is-pointer-right','is-pointer-up','is-pointer-down'));
+  rows.forEach(row=>{row.addEventListener('pointermove',()=>{if(!reduceMotion.matches)row.classList.add('is-pointer-hover');});row.addEventListener('pointerleave',()=>row.classList.remove('is-pointer-hover'));});
   const observer=new IntersectionObserver(entries=>{const visible=entries[0].isIntersecting;if(!visible){wasPlaying=playing;stop();}else if(wasPlaying&&!reduceMotion.matches){playing=true;start();}},{threshold:.15});observer.observe(slider);
   document.addEventListener('visibilitychange',()=>{if(document.hidden){wasPlaying=playing;stop();}else if(wasPlaying&&!reduceMotion.matches){playing=true;start();}});
   reduceMotion.addEventListener?.('change',event=>{if(event.matches){wasPlaying=playing;setPlaying(false);}else if(wasPlaying){setPlaying(true);}});
