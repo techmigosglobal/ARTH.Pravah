@@ -13,12 +13,13 @@ test('parent homepage is complete static HTML with its own branding and lightwei
   for(const href of ['/arth.export','/arth.pravah','/arth.urja','/arth.gati','/about#vision','/contact'])assert.match(html,new RegExp(`href="${href.replace('#','\\#')}"`),href);
   assert.match(html,/src="\/src\/arthasya-client.js"/);
   assert.match(html,/slide-export\.png/);
+  assert.match(html,/class="arth-header"/);assert.match(html,/class="arth-footer"/);assert.match(html,/class="arth-outline" href="\/contact"/);
   assert.doesNotMatch(html,/src="\/src\/app.js"|<canvas|<form|ARTH.Pravah home|A shared vision/);
 });
 
 test('parent business, about and contact routes render safe factual content',async()=>{
   for(const [path,heading,needle] of [['/arth.export','Spices with a sense of place.','Turmeric'],['/arth.urja','Charge the next move.','charging points'],['/arth.gati','Fleet built to move.','cargo boxes'],['/about','More than business. A belief in better.','Value with purpose.'],['/contact','Start with a question.','export-enquiry']]){
-    const html=await documentFor(path);assert.match(html,new RegExp(`<h1[^>]*>${heading.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</h1>`),path);assert.match(html,new RegExp(needle,'i'),path);assert.match(html,/href="\/#businesses"/);
+    const html=await documentFor(path);assert.match(html,new RegExp(`<h1[^>]*>${heading.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</h1>`),path);assert.match(html,new RegExp(needle,'i'),path);assert.match(html,/href="\/#businesses"/);if(path==='/about'||path==='/contact')assert.match(html,/aria-current="page"/);
   }
   const contact=await documentFor('/contact');assert.equal((contact.match(/data-enquiry-form=/g)||[]).length,4);assert.doesNotMatch(contact,/<form[^>]+action=/i);assert.match(contact,/Nothing is sent or stored/);
   assert.ok(allPaths.includes('/arth.export')&&allPaths.includes('/arth.urja')&&allPaths.includes('/arth.gati')&&allPaths.includes('/about')&&allPaths.includes('/contact'));

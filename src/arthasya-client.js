@@ -3,7 +3,8 @@ import {businesses} from './arthasya.js';
 const toggle=document.querySelector('.arth-menu-toggle');
 const nav=document.querySelector('#arth-mobile-nav');
 const dialog=document.querySelector('.arth-dialog');
-const setMenu=open=>{if(!toggle||!nav)return;nav.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');};
+let menuPreviousFocus=null;
+const setMenu=open=>{if(!toggle||!nav)return;nav.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');document.body.classList.toggle('arth-menu-open',open);if(open){menuPreviousFocus=document.activeElement;requestAnimationFrame(()=>nav.querySelector('a,button')?.focus());}else if(menuPreviousFocus&&document.contains(menuPreviousFocus)){menuPreviousFocus.focus();menuPreviousFocus=null;}};
 if(toggle)toggle.addEventListener('click',()=>setMenu(nav.hidden));
 
 const header=document.querySelector('.arth-header');
