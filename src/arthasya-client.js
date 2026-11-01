@@ -26,7 +26,7 @@ if(slider){
   let timer=null, playing=!reduceMotion.matches, wasPlaying=playing, pointerStart=null;
   const render=()=>{const activeId=slides[index]?.dataset.slide;slider.dataset.theme=activeId;slides.forEach((slide,i)=>{const active=i===index;slide.classList.toggle('is-active',active);slide.setAttribute('aria-hidden',String(!active));const link=slide.querySelector('.arth-slide-link');if(link)link.tabIndex=active?0:-1;});tabs.forEach((tab,i)=>{const active=i===index;tab.classList.toggle('is-active',active);tab.setAttribute('aria-current',String(active));});rows.forEach(row=>row.classList.toggle('is-featured',row.dataset.theme===activeId));if(current)current.textContent=String(index+1).padStart(2,'0');if(progress)progress.style.width=`${((index+1)/slides.length)*100}%`;};
   const stop=()=>{if(timer){clearInterval(timer);timer=null;}};
-  const start=()=>{stop();if(reduceMotion.matches||!playing||document.hidden)return;timer=setInterval(()=>go(index+1),6500);};
+  const start=()=>{stop();if(reduceMotion.matches||!playing||document.hidden)return;timer=setInterval(()=>go(index+1),4000);};
   const go=next=>{index=(next+slides.length)%slides.length;render();start();};
   const setPlaying=next=>{playing=next;pauseButton?.setAttribute('aria-pressed',String(!playing));if(pauseLabel)pauseLabel.textContent=playing?'Pause':'Play';if(pauseButton)pauseButton.querySelector('.arth-pause-icon').textContent=playing?'Ⅱ':'▶';if(playing)start();else stop();};
   slider.querySelector('[data-slider-prev]')?.addEventListener('click',()=>{setPlaying(false);go(index-1);});

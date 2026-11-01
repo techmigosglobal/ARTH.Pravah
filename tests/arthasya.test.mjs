@@ -7,7 +7,7 @@ import {pageSEO,siteSettings,allPaths} from '../src/seo.js';
 test('parent homepage is complete static HTML with its own branding and lightweight entrypoint',async()=>{
   const html=await documentFor('/');
   assert.equal((html.match(/<h1\b/g)||[]).length,4);
-  for(const label of ['Trade that travels.','Electric, every day.','Charge the next move.','Fleet built to move.','Four ways forward.','Arthasya brings together exports, electric mobility, charging and fleet services.','Explore Our Businesses','Our Vision','Export','arth.pravah','arth.urja','arth.gati','Built around movement.'])assert.ok(html.includes(label),label);
+  for(const label of ['ARTHASYA EXPORT','ARTHASYA PRAVAH','ARTHASYA URJA','ARTHASYA GATI','Trade that travels.','Electric, every day.','Charge the next move.','Fleet built to move.','Four ways forward.','Arthasya brings together exports, electric mobility, charging and fleet services.','Explore Our Businesses','Our Vision','Export','arth.pravah','arth.urja','arth.gati','Built around movement.'])assert.ok(html.includes(label),label);
   assert.match(html,/src="\/assets\/arthasya\/logo-transparent.png"/);
   assert.match(html,/alt="Arthasya — Value with purpose"/);
   for(const href of ['/arth.export','/arth.pravah','/arth.urja','/arth.gati','/about#vision','/contact'])assert.match(html,new RegExp(`href="${href.replace('#','\\#')}"`),href);
