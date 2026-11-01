@@ -6,6 +6,11 @@ const dialog=document.querySelector('.arth-dialog');
 const setMenu=open=>{if(!toggle||!nav)return;nav.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');};
 if(toggle)toggle.addEventListener('click',()=>setMenu(nav.hidden));
 
+const header=document.querySelector('.arth-header');
+const syncHeader=()=>header?.classList.toggle('is-scrolled',window.scrollY>32);
+syncHeader();
+window.addEventListener('scroll',syncHeader,{passive:true});
+
 const slider=document.querySelector('[data-slider]');
 if(slider){
   const slides=[...slider.querySelectorAll('[data-slide]')];
@@ -49,3 +54,11 @@ document.addEventListener('click',event=>{
 dialog?.addEventListener('click',event=>{if(event.target===dialog){const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close();}});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&nav&&!nav.hidden){setMenu(false);toggle.focus();}if(event.key==='Tab'&&nav&&!nav.hidden){const items=[toggle,...nav.querySelectorAll('a,button')],first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){last.focus();event.preventDefault();}else if(!event.shiftKey&&document.activeElement===last){first.focus();event.preventDefault();}}});
 window.matchMedia('(min-width: 681px)').addEventListener?.('change',event=>{if(event.matches)setMenu(false);});
+
+document.querySelectorAll('[data-enquiry-submit]').forEach(button=>button.addEventListener('click',()=>{
+  const form=button.closest('[data-enquiry-form]');
+  if(!form?.checkValidity()){form?.reportValidity();return;}
+  form.classList.add('is-unavailable');
+  const status=form.querySelector('[data-form-status]');
+  if(status)status.textContent='Verified enquiry channels are being confirmed. Nothing was sent or stored.';
+}));

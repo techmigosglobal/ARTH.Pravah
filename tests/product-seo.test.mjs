@@ -20,7 +20,7 @@ test('SEO has unique descriptions, safe production settings, and truthful struct
  assert.equal(pageSEO('/admin',production).robots,'noindex,nofollow');assert.equal(pageSEO('/models/aero/extra',production).robots,'noindex,nofollow');
 });
 test('sitemap includes canonical public routes and excludes unavailable workflows',()=>{
- const xml=sitemap();for(const p of publicPaths)assert.ok(xml.includes('https://example.com'+p+'</loc>'));assert.doesNotMatch(xml,/\/admin|\/contact|\/support|\/test-ride/);for(const match of xml.matchAll(/<loc>(.*?)<\/loc>/g))assert.ok(!match[1].includes('?'));assert.equal(robots(),'User-agent: *\nDisallow: /\n');
+ const xml=sitemap();for(const p of publicPaths)assert.ok(xml.includes('https://example.com'+p+'</loc>'));assert.doesNotMatch(xml,/\/admin|\/support|\/test-ride/);assert.ok(xml.includes('https://example.com/contact</loc>'));for(const match of xml.matchAll(/<loc>(.*?)<\/loc>/g))assert.ok(!match[1].includes('?'));assert.equal(robots(),'User-agent: *\nDisallow: /\n');
 });
 test('comparison uses the same catalogue records and nested unknown routes are 404 pages',()=>{
  const html=renderPage('/compare',{compare:['aero','vega']}).comparison;assert.match(html,/150 kg/);assert.match(html,/250 kg/);assert.match(html,/Front \/ rear disc brakes/);assert.equal(renderPage('/models/aero/extra').heading,'Page not found');
