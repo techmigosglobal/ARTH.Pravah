@@ -9,9 +9,9 @@ export function siteSettings({origin='https://example.com',indexable=false}={}){
   return {origin:url.origin,indexable};
 }
 export function pageSEO(path,settings=siteSettings()){
-  if(path==='/') return {title:'Arthasya | Value with purpose',description:'Explore Arthasya’s four businesses: spices and turmeric exports, arth.pravah electric bikes, arth.urja charging stations and arth.gati fleet services.',canonical:settings.origin+'/',image:settings.origin+'/assets/arthasya/slide-pravah.png',siteName:'Arthasya',robots:settings.indexable?'index,follow':'noindex,nofollow',schema:[{'@context':'https://schema.org','@type':'Organization',name:'Arthasya',url:settings.origin+'/',logo:settings.origin+'/assets/arthasya/logo-transparent.png'}]};
+  if(path==='/') return {title:'Arthasya | Value with purpose',description:'Explore Arthasya’s four businesses: red chillies and turmeric exports, arth.pravah electric bikes, arth.urja charging stations and arth.gati fleet services.',canonical:settings.origin+'/',image:settings.origin+'/assets/arthasya/slide-pravah.png',siteName:'Arthasya',robots:settings.indexable?'index,follow':'noindex,nofollow',schema:[{'@context':'https://schema.org','@type':'Organization',name:'Arthasya',url:settings.origin+'/',logo:settings.origin+'/assets/arthasya/logo-transparent.png'}]};
   const parentSEO={
-    '/arth.export':{title:'Arthasya Export | Spices and turmeric',description:'Explore Arthasya Export, focused on spices and turmeric.',image:'/assets/arthasya/slide-export.png'},
+    '/arth.export':{title:'Arthasya Export | Red chillies and turmeric',description:'Explore Arthasya Export, focused on red chillies and turmeric.',image:'/assets/arthasya/slide-export.png'},
     '/arth.urja':{title:'Arthasya Urja | Charging stations',description:'Explore arth.urja, Arthasya’s charging-station business for electric mobility.',image:'/assets/arthasya/slide-urja.png'},
     '/arth.gati':{title:'Arthasya Gati | Electric-bike fleet services',description:'Explore arth.gati, Arthasya’s electric-bike fleet service business.',image:'/assets/arthasya/slide-gati.png'},
     '/about':{title:'About Arthasya | Value with purpose',description:'Learn about Arthasya, its purpose, vision, mission and business-group direction.',image:'/assets/arthasya/slide-pravah.png'},
