@@ -8,7 +8,7 @@ for (const [model,sequence] of Object.entries(manifest)) {
 }
 await rm('dist',{recursive:true,force:true});
 await mkdir('dist');
-for (const p of ['src','assets','_headers']) await cp(p,join('dist',p),{recursive:true});
+for (const p of ['src','assets','_headers','.htaccess']) await cp(p,join('dist',p),{recursive:true});
 for(const path of allPaths){const directory=path==='/'?'dist':join('dist',path.slice(1));await mkdir(directory,{recursive:true});await writeFile(join(directory,'index.html'),await documentFor(path));}
 await writeFile('dist/404.html',await documentFor('/404'));
 await writeFile('dist/sitemap.xml',sitemap());

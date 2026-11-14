@@ -6,7 +6,7 @@ import {pageSEO,siteSettings,allPaths} from '../src/seo.js';
 
 test('parent homepage is complete static HTML with its own branding and lightweight entrypoint',async()=>{
   const html=await documentFor('/');
-  assert.equal((html.match(/<h1\b/g)||[]).length,4);
+  assert.equal((html.match(/<h1\b/g)||[]).length,1);
   for(const label of ['ARTHASYA EXPORT','ARTHASYA PRAVAH','ARTHASYA URJA','ARTHASYA GATI','Trade that travels.','Electric, every day.','Charge the next move.','Fleet built to move.','Four ways forward.','Arthasya brings together exports, electric mobility, charging and fleet services.','Our presence','Vision','Mission','Core values','Red chillies & turmeric','Explore Our Businesses','Our Vision','Export','arth.pravah','arth.urja','arth.gati','Built around movement.'])assert.ok(html.includes(label),label);
   assert.match(html,/src="\/assets\/arthasya\/logo-transparent.png"/);
   assert.match(html,/alt="Arthasya — Value with purpose"/);
@@ -34,6 +34,7 @@ test('old EV homepage remains directly available with original features and sepa
   for(const feature of ['home-hero','film-section','selection-strip','data-select-model','/src/app.js'])assert.ok(html.includes(feature),feature);
   assert.match(html,/class="is-home"/);
   assert.match(html,/href="\/arth.pravah" class="wordmark"/);
+  assert.equal((html.match(/href="\/">Back to home<\/a>/g)||[]).length,2);
   const settings=siteSettings({origin:'https://arthasya.biz',indexable:true});
   const parent=pageSEO('/',settings),ev=pageSEO('/arth.pravah',settings);
   assert.equal(parent.canonical,'https://arthasya.biz/');

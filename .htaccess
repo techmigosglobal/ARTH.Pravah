@@ -1,0 +1,48 @@
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Enforce the production HTTPS and non-www canonical host.
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^www\.arthasya\.biz$ [NC]
+  RewriteRule ^ https://arthasya.biz%{REQUEST_URI} [R=301,END,NE]
+
+  # Keep the published canonical URLs slashless for generated route directories.
+  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+  RewriteRule ^(.+)/$ /$1 [R=301,END,NE]
+
+  # Serve /about and /models/aero from their generated index.html files without
+  # exposing the implementation path or relying on an SPA fallback.
+  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+  RewriteRule ^(.+?)/?$ $1/index.html [END]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain text/html text/css text/xml application/xml application/xhtml+xml application/rss+xml application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?:css|js|json|map|svg|xml|txt)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+  <FilesMatch "\.(?:png|jpe?g|webp|avif|gif|ico|glb|bin)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+AddDefaultCharset UTF-8

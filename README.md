@@ -176,6 +176,8 @@ Confirmed mapping: Aero=B2+ (page 2), Apex=B1 (3), Nova=B2 (4), Teja=B4 (5), Vay
 
 ### Real-domain switch
 
+Use `npm run build:hostinger` for the `arthasya.biz` production release. It generates `dist/` with production canonicals, indexing rules, and sitemap URLs. Run `npm run check` separately with the default preview settings.
+
 Keep SITE_INDEXABLE unset or false for previews. For production set SITE_ORIGIN to the verified HTTPS origin without a path or query, and SITE_INDEXABLE to true. Example PowerShell after replacing the hostname:
 
 ```powershell
